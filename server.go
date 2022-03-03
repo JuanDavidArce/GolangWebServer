@@ -30,6 +30,14 @@ func (s *Server) Handle(path string, handler http.HandlerFunc) {
 	s.router.rules[path] = handler
 }
 
+func (s *Server) AddMidleware(f http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
+	for _, m := range middlewares {
+		f = m(f)
+	}
+
+	return f
+}
+
 //Funcion tipo receiver, del struct Server, devuelve un error en caso de que haya problemas al conectar
 func (s *Server) Listen() error {
 	//el router va a ser el encargado de tomar las urls y procesarlas como se debe, crea el entry-point
